@@ -1,0 +1,130 @@
+Metadata-Version: 2.4
+Name: llava
+Version: 1.2.2.post1
+Summary: Towards GPT-4 like large language and visual assistant.
+Project-URL: Homepage, https://llava-vl.github.io
+Project-URL: Bug Tracker, https://github.com/haotian-liu/LLaVA/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: Apache Software License
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: transformers==4.37.2
+Requires-Dist: tokenizers==0.15.1
+Requires-Dist: sentencepiece==0.1.99
+Requires-Dist: shortuuid
+Requires-Dist: accelerate==0.21.0
+Requires-Dist: peft==0.4.0
+Requires-Dist: bitsandbytes
+Requires-Dist: pydantic
+Requires-Dist: markdown2[all]
+Requires-Dist: numpy
+Requires-Dist: scikit-learn==1.2.2
+Requires-Dist: gradio==4.16.0
+Requires-Dist: gradio_client==0.8.1
+Requires-Dist: requests
+Requires-Dist: httpx==0.24.0
+Requires-Dist: uvicorn
+Requires-Dist: fastapi
+Requires-Dist: einops==0.6.1
+Requires-Dist: einops-exts==0.0.4
+Requires-Dist: timm==0.6.13
+Requires-Dist: openai
+Requires-Dist: wikipedia
+Provides-Extra: train
+Requires-Dist: deepspeed==0.12.6; extra == "train"
+Requires-Dist: ninja; extra == "train"
+Requires-Dist: wandb; extra == "train"
+Provides-Extra: build
+Requires-Dist: build; extra == "build"
+Requires-Dist: twine; extra == "build"
+Dynamic: license-file
+
+
+This repo contains the core code for CRAG. Download the required pretrained weights including 'clip-vit-large-patch14-336', 'llava-v1.5-7b', 'projector_weight/llava-v1.5-mlp2x-336px-pretrain-vicuna-7b-v1.5' and put them to checkpoints folder
+
+The training code for the model part is ready;
+
+The evaluation code is ready.
+
+# Install
+
+**1. Clone the repository and enter the project directory**
+
+```bash
+git clone xxxxxx
+cd CRAG
+```
+
+**2. Create a Python 3.10 conda environment and install the package**
+```bash
+conda create -n crag python=3.10 -y
+conda activate crag
+pip install --upgrade pip            # ensure modern pip (PEP 660 support)
+pip install -e .
+```
+
+**3. Install extra dependencies needed for training**
+```bash
+pip install -e ".[train]"
+pip install flash-attn --no-build-isolation
+```
+
+If you get errors when installing flash-attn, try downloading .whl from flash-attn official website first.
+
+# Dataset download
+
+## Dataset Links
+
+Please download the following datasets used for training:
+
+| Domain         | Dataset                                                                 | Link                                                                                  |
+|----------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| Meteorology        | ClimateIQA                                                               | https://huggingface.co/datasets/GPS-Lab/ClimateIQA                                    |
+| Chemistry      | ChemQA                                                                   | https://huggingface.co/datasets/shangzhu/ChemQA                                       |
+| Remote Sensing | GeoChat Instruct                                          | https://huggingface.co/datasets/MBZUAI/GeoChat_Instruct                               |
+| Math           | AMATH-SFT                                                                | https://huggingface.co/datasets/Quinn777/AMATH-SFT                                    |
+| Art            | SemArt                                                                   | https://researchdata.aston.ac.uk/380/1/SemArt.zip                                     |
+| Medical        | LLaVA-Med                                                                 | https://github.com/microsoft/LLaVA-Med                                                |
+| Astronomy      | AstroLLaVA conversations                                                  | https://huggingface.co/datasets/UniverseTBD/AstroLLaVA_convos                         |
+| Agriculture    | Agricultural pests & diseases instruction tuning data                   | https://huggingface.co/datasets/Agri-LLaVA-Anonymous/Agricultural_pests_and_diseases_instruction_tuning_data |
+
+
+Then download the training files from this link:  
+https://huggingface.co/datasets/leo20000306/CRAG_trainjson
+
+## Next Steps: Training
+
+After downloading the datasets, please follow these steps to start fine-tuning on KANT dataset:
+
+1. Open the script file located at `scripts/v1_5/finetune_newdomain.sh`.
+
+2. Modify the `image_folder` parameter inside that script to point to the local path where your images are stored.
+
+3. Run the training script:
+
+   ```bash
+   bash scripts/v1_5/finetune_newdomain.sh
+   ```
+## Evaluation
+
+To run evaluation, please follow the steps below:
+
+1. Download the test file from this link:  
+   https://huggingface.co/datasets/leo20000306/crag_evaldata
+
+2. In the scripts under `scripts/v1_5/eval/`, modify the relevant files to set:
+
+   - `--question-file` → path to the downloaded test file  
+   - `--image-folder` → path to the folder with the images for evaluation
+
+3. Configure the evaluation script `llava/eval/eval_video_qa.py`:
+
+   - Set your **OpenAI key**  
+   - Set the **base URL** for the OpenAI API (used for scoring model predictions vs labels)
+
+4. Once everything is set up, run the evaluation shell script:
+
+   ```bash
+   bash scripts/v1_5/eval/xxx.sh
+
