@@ -189,6 +189,10 @@ class Retriever(nn.Module):
             training_keys_only=False,
         ):
         LORA_TOTAL_PARAMS = self.hidden_size * self.low_rank * self.num_hidden_layers
+        if not training_keys_only:
+            B = len(inputs)
+        else:
+            B = inputs['input_ids'].shape[0]
 
         # if not training_keys_only:
         #     B = len(inputs)
@@ -324,8 +328,6 @@ class Retriever(nn.Module):
         weight_offset_clone = selected_offset_components.clone() 
         l1_norm = torch.tensor(0.0, device=queries.device) # Initialize with a zero tensor
         idx_map = generate_dict(8, 8)
-
-        print('==============', self.previous_weights.shape)
 
         for i, item in enumerate(idx_vote.tolist()):
             idx_prompt = idx_map[item] - 1
