@@ -1,0 +1,5 @@
+# 忽略 Python 缓存
+__pycache__/
+
+# 忽略 output 文件夹
+llava/output/

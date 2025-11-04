@@ -1,60 +1,32 @@
-[34m[1mwandb[0m: Detected [openai] in use.
-[34m[1mwandb[0m: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
-[34m[1mwandb[0m: For more information, check out the docs at: https://weave-docs.wandb.ai/
-  0%|                                                                                                                                           | 0/125 [00:00<?, ?it/s]/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py:838: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+[34m[1mwandb[39m[22m: Detected [openai] in use.
+[34m[1mwandb[39m[22m: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+[34m[1mwandb[39m[22m: For more information, check out the docs at: https://weave-docs.wandb.ai/
+  0%|                                                                                                                                           | 0/125 [00:00<?, ?it/s]
 test:
 test:
 test:
 test:
-  return fn(*args, **kwargs)
-/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-                                                                                                                                                                        
-
 {'loss': 8.9016, 'learning_rate': 5e-06, 'epoch': 0.01}
 test:
 test:
 test:
 test:
-
 {'loss': 1.0878, 'learning_rate': 1e-05, 'epoch': 0.02}
 test:
 test:
 test:
 test:
-
 {'loss': 1.0269, 'learning_rate': 1.5000000000000002e-05, 'epoch': 0.02}
 test:
 test:
 test:
 test:
-
 {'loss': 1.0208, 'learning_rate': 2e-05, 'epoch': 0.03}
 test:
 test:
 test:
-test:
-
-{'loss': 1.0824, 'learning_rate': 1.9996629653035128e-05, 'epoch': 0.04}
-test:
-test:
-test:
-test:
-
-{'loss': 1.0301, 'learning_rate': 1.9986520883988233e-05, 'epoch': 0.05}
-test:
-test:
-test:
-test:
-
-{'loss': 1.0764, 'learning_rate': 1.9969680506871138e-05, 'epoch': 0.06}
-test:
-test:
-test:
-test:
-
-{'loss': 1.0409, 'learning_rate': 1.9946119873266615e-05, 'epoch': 0.06}
-test:
-test:
-test:
-test:
+  0%|                                                                                                                                           | 0/125 [00:00<?, ?it/s]/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py:838: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+  4%|█████▏                                                                                                                             | 5/125 [00:49<17:36,  8.80s/it]

@@ -1,210 +1,223 @@
-import openai
-import os
-import argparse
+# 文件: llava/eval/eval_video_qa.py
+# (已修改为按 domain 分类计算指标)
+
 import json
-import ast
-from multiprocessing.pool import Pool
-from tqdm import tqdm
-from openai import OpenAI
+import argparse
+from pycocoevalcap.tokenizer.ptbtokenizer import PTBTokenizer
+from pycocoevalcap.bleu.bleu import Bleu
+from pycocoevalcap.meteor.meteor import Meteor
+from pycocoevalcap.rouge.rouge import Rouge
+from pycocoevalcap.cider.cider import Cider
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="question-answer-generation-using-gpt-3")
-    parser.add_argument("--pred_path", default=r'', help="The path to file containing prediction.")
-    parser.add_argument("--output_dir", default=r'', help="The path to save annotation json files.")
-    parser.add_argument("--output_json", default=r'', help="The path to save annotation final combined json file.")
-    parser.add_argument("--api_key", default="" , help="OpenAI API key.")
-    parser.add_argument("--api_base", default="", type=str, help="OpenAI API base.")
-    parser.add_argument("--num_tasks", default=1, type=int, help="Number of splits.")
-    args = parser.parse_args()
-    return args
-
-
-def annotate(prediction_set, caption_files, output_dir, args):
-    """
-    Evaluates question and answer pairs using GPT-3
-    Returns a score for correctness.
-    """
-    # Set the OpenAI API key.
-    client = OpenAI(api_key=args.api_key, base_url=args.api_base)
-    for file in caption_files:
-        key = file[:-5] # Strip file extension
-        qa_set = prediction_set[str(key)]
-        question = qa_set['prompt']
-        answer = qa_set['gt_response']
-        pred = qa_set['pred_response']
-        try:
-            # Compute the correctness score
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                # model="gpt-3.5-turbo",
-                messages=[
-                    {
-                        "role": "system",
-                        "content":
-                            "You are an intelligent chatbot designed for evaluating the correctness of generative outputs for question-answer pairs. "
-                            "Your task is to compare the predicted answer with the correct answer and determine if they match meaningfully. Here's how you can accomplish the task:"
-                            "------"
-                            "##INSTRUCTIONS: "
-                            "- Focus on the meaningful match between the predicted answer and the correct answer.\n"
-                            "- Consider synonyms or paraphrases as valid matches.\n"
-                            "- Evaluate the correctness of the prediction compared to the answer."
-                    },
-                    {
-                        "role": "user",
-                        "content":
-                            "Please evaluate the following image-based question-answer pair:\n\n"
-                            f"Question: {question}\n"
-                            f"Correct Answer: {answer}\n"
-                            f"Predicted Answer: {pred}\n\n"
-                            "Provide your evaluation only as a yes/no and score where the score is an integer value between 0 and 100, with 100 indicating the highest meaningful match, and you should be accurate to single digits like 62, 78, 41. "
-                            "Please generate the response in the form of a Python dictionary string with keys 'pred' and 'score', where value of 'pred' is  a string of 'yes' or 'no' and value of 'score' is in INTEGER, not STRING."
-                            "DO NOT PROVIDE ANY OTHER OUTPUT TEXT OR EXPLANATION. Only provide the Python dictionary string. "
-                            "For example, your response should look like this: {'pred': 'yes', 'score': 68}."
-                    }
-                ]
-            )
-            # Convert response to a Python dictionary.
-            response_message = response.choices[0].message.content
-            response_dict = ast.literal_eval(response_message)
-            result_qa_pair = [response_dict, qa_set]
-
-            # Save the question-answer pairs to a json file.
-            # with open(f"{output_dir}/{key}.json", "w") as f:
-            with open(f"{output_dir}/{key}.json", "w") as f:
-                json.dump(result_qa_pair, f)
-
-        except Exception as e:
-            print(f"Error processing file '{key}': {e}")
-
-
-def main():
-    """
-    Main function to control the flow of the program.
-    """
-    # Parse arguments.
-    args = parse_args()
-
-    with open(args.pred_path, 'r', encoding='utf-8') as file:
-        new_pred_contents = [json.loads(line) for line in file]
-
-
-    '''
-    # Dictionary to store the count of occurrences for each video_id
-    video_id_counts = {}
-    new_pred_contents = []
-
-    # Iterate through each sample in pred_contents
-    for sample in pred_contents:
-        video_id = sample['video_name']
-        if video_id in video_id_counts:
-            video_id_counts[video_id] += 1
-        else:
-            video_id_counts[video_id] = 0
-
-        # Create a new sample with the modified key
-        new_sample = sample
-        new_sample['video_name'] = f"{video_id}_{video_id_counts[video_id]}"
-        new_pred_contents.append(new_sample)
-    '''
-    # Generating list of id's and corresponding files
-    id_list =  [x.get('sample_id', x.get('question_id')) for x in new_pred_contents]
-    caption_files = [f"{id}.json" for id in id_list]
-
-    output_dir = args.output_dir
-    # Generate output directory if not exists.
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    # Preparing dictionary of question-answer sets
-    prediction_set = {}
-    for sample in new_pred_contents:
-        id = str(sample.get('sample_id', sample.get('question_id')))
-        question = sample['prompt']
-        answer = sample['gt_response']
-        pred = sample['pred_response'].replace('<p>','').replace('</p>','')
-        qa_set = {"prompt": question, "gt_response": answer, "pred_response": pred}
-        prediction_set[id] = qa_set
-
-    num_tasks = args.num_tasks
-    # While loop to ensure that all captions are processed.
-    while True:
-        try:
-            # Files that have not been processed yet.
-            completed_files = os.listdir(output_dir)
-            print(f"completed_files: {len(completed_files)}")
-
-            # Files that have not been processed yet.
-            incomplete_files = [f for f in caption_files if f not in completed_files]
-            print(f"incomplete_files: {len(incomplete_files)}")
-
-            # Break the loop when there are no incomplete files
-            if len(incomplete_files) == 0:
-                break
-            if len(incomplete_files) <= num_tasks:
-                num_tasks = 1
-
-            # Split tasks into parts.
-            part_len = len(incomplete_files) // num_tasks
-            all_parts = [incomplete_files[i:i + part_len] for i in range(0, len(incomplete_files), part_len)]
-            task_args = [(prediction_set, part, args.output_dir, args) for part in all_parts]
-
-            # Use a pool of workers to process the files in parallel.
-            with Pool() as pool:
-                pool.starmap(annotate, task_args)
-
-        except Exception as e:
-            print(f"Error: {e}")
-
-    # Combine all the processed files into one
-    combined_contents = {}
-    json_path = args.output_json
-
-    # Iterate through json files
-    for file_name in os.listdir(output_dir):
-        if file_name.endswith(".json"):
+def load_jsonl(filename):
+    """Loads a JSON Lines file into a list of dictionaries."""
+    data = []
+    with open(filename, 'r', encoding='utf-8') as f:
+        for line in f:
             try:
-                file_path = os.path.join(output_dir, file_name)
-                with open(file_path, "r") as json_file:
-                    content = json.load(json_file)
-                    combined_contents[file_name[:-5]] = content
-            except:
-                print(f"Error processing file '{file_name}'")
+                data.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                print(f"Skipping invalid line in {filename}: {line.strip()} - Error: {e}")
+    return data
 
-    # Write combined content to a json file
-    with open(json_path, "w") as json_file:
-        json.dump(combined_contents, json_file)
-    print("All evaluation completed!")
+def calculate_metrics(gts, res):
+    """
+    Calculates BLEU, METEOR, ROUGE-L, and CIDEr scores.
+    Args:
+        gts (dict): Ground truth dictionary {question_id: [answer_string]}
+        res (dict): Results dictionary {question_id: [answer_string]}
+    Returns:
+        dict: Dictionary containing calculated scores.
+    """
+    # Set up scorers
+    scorers = [
+        (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
+        (Meteor(),"METEOR"),
+        (Rouge(), "ROUGE_L"),
+        (Cider(), "CIDEr")
+    ]
 
-    # Calculate average score and accuracy
-    score_sum = 0
-    count = 0
-    yes_count = 0
-    no_count = 0
-    for key, result in tqdm(combined_contents.items()):
-        try:
-            # Computing score
-            count += 1
-            score_match = result[0]['score']
-            score = int(score_match)
-            score_sum += score
+    final_scores = {}
+    for scorer, method in scorers:
+        # print(f'Computing {method} score...') # 减少重复打印
+        # pycocoevalcap expects dict of lists for both gts and res
+        # Ensure res format matches gts format (list of strings for answer)
+        score, scores = scorer.compute_score(gts, res)
+        if type(method) == list:
+            for sc, scs, m in zip(score, scores, method):
+                final_scores[m] = sc
+                # print(f"{m}: {sc:.4f}")
+        else:
+            final_scores[method] = score
+            # print(f"{method}: {score:.4f}")
 
-            # Computing accuracy
-            pred = result[0]['pred']
-            if "yes" in pred.lower():
-                yes_count += 1
-            elif "no" in pred.lower():
-                no_count += 1
-        except:
-            print(result)
+    # 打印分数
+    for m, s in final_scores.items():
+        print(f"{m}: {s:.4f}")
 
-    average_score = score_sum / count
-    accuracy = yes_count / (yes_count + no_count)
-    print("Yes count:", yes_count)
-    print("No count:", no_count)
-    print("Accuracy:", accuracy)
-    print("Average score:", average_score)
+    return final_scores
 
+def main(args):
+    print("Loading ground truth data...")
+    gt_data = load_jsonl(args.gt_file)
+    print(f"Loaded {len(gt_data)} ground truth items.")
+
+    print("Loading prediction data...")
+    pred_data = load_jsonl(args.pred_path)
+    print(f"Loaded {len(pred_data)} prediction items.")
+
+    if not gt_data or not pred_data:
+        print("Error: Ground truth or prediction data is empty.")
+        return
+
+    # --- Format data for pycocoevalcap ---
+    # Ground Truths (gts): Dictionary {question_id: [list_of_reference_answers]}
+    gts = {}
+    # 存储 QID 到 domain 的映射
+    qid_to_domain = {}
+    
+    for item in gt_data:
+        qid = item.get('question_id')
+        answer = item.get('gpt4_answer') # Assuming ground truth is in 'gpt4_answer'
+        # 获取 domain 信息
+        domain_info = item.get('domain')
+
+        if qid is not None and answer is not None:
+            # pycocoevalcap expects a list of reference strings
+            gts[str(qid)] = [str(answer)] # Convert qid to string key, wrap answer in list
+        else:
+             print(f"Warning: Missing 'question_id' or 'gpt4_answer' in GT item: {item}")
+             continue # 如果 qid 或 answer 为空，跳过此项
+
+        # 解析并存储 domain
+        if domain_info and isinstance(domain_info, dict):
+            found_domain = None
+            for domain_name, is_active in domain_info.items():
+                if is_active:
+                    found_domain = domain_name
+                    break # 假设每个 qid 只有一个 Ture 的 domain
+            if found_domain:
+                qid_to_domain[str(qid)] = found_domain
+            else:
+                print(f"Warning: No active domain found for qid {qid} in {domain_info}")
+        else:
+            print(f"Warning: Missing or invalid 'domain' field for qid {qid}")
+
+
+    # Results (res): Dictionary {question_id: [single_generated_answer]}
+    res = {}
+    # 自动检测 answer_key 的逻辑
+    answer_key = 'text' # Default guess
+    if pred_data:
+        first_pred_keys = pred_data[0].keys()
+        if 'text' in first_pred_keys:
+            answer_key = 'text'
+        elif 'answer' in first_pred_keys:
+            answer_key = 'answer'
+        elif 'pred' in first_pred_keys:
+             answer_key = 'pred'
+        elif 'pred_response' in first_pred_keys:
+             answer_key = 'pred_response'
+        else:
+            print(f"Warning: Could not automatically determine answer key in prediction file. Using default '{answer_key}'. Keys found: {list(first_pred_keys)}")
+
+    for item in pred_data:
+        qid = item.get('question_id')
+        answer = item.get(answer_key)
+        if qid is not None and answer is not None:
+            res[str(qid)] = [str(answer)]
+        else:
+             print(f"Warning: Missing 'question_id' or '{answer_key}' in prediction item: {item}")
+
+    # Filter gts and res to only include common question_ids
+    common_ids = set(gts.keys()) & set(res.keys())
+    print(f"Found {len(common_ids)} common question IDs between GT and predictions.")
+
+    if not common_ids:
+        print("Error: No common question IDs found between ground truth and predictions. Cannot evaluate.")
+        return
+
+    filtered_gts = {qid: gts[qid] for qid in common_ids}
+    filtered_res = {qid: res[qid] for qid in common_ids}
+
+    # --- Tokenize (对所有数据一次性 Tokenize) ---
+    print('Tokenizing...')
+    tokenizer = PTBTokenizer() # (这仍然需要 Java)
+    gts_formatted_for_tokenizer = {}
+    for qid, answers in filtered_gts.items():
+        gts_formatted_for_tokenizer[qid] = [{'caption': ans} for ans in answers]
+
+    res_formatted_for_tokenizer = {}
+    for qid, answers in filtered_res.items():
+        res_formatted_for_tokenizer[qid] = [{'caption': ans} for ans in answers]
+
+    # (这仍然需要 Java)
+    gts_tokenized = tokenizer.tokenize(gts_formatted_for_tokenizer)
+    res_tokenized = tokenizer.tokenize(res_formatted_for_tokenizer)
+
+    # --- 按 Domain 分组 Tokenized 数据 ---
+    print("Grouping tokenized results by domain...")
+    domain_gts_tokenized = {}
+    domain_res_tokenized = {}
+    all_domains = set()
+
+    for qid in common_ids:
+        domain = qid_to_domain.get(qid) # 使用 .get 避免 qid 不在 map 中的错误
+        if domain:
+            all_domains.add(domain)
+            if qid in gts_tokenized:
+                domain_gts_tokenized.setdefault(domain, {})[qid] = gts_tokenized[qid]
+            if qid in res_tokenized:
+                domain_res_tokenized.setdefault(domain, {})[qid] = res_tokenized[qid]
+        else:
+            print(f"Warning: QID {qid} found in common_ids but has no domain info. It will only be in 'overall' metrics.")
+
+    # --- Calculate Metrics (Overall + Per-Domain) ---
+    
+    all_scores = {} # 最终保存所有分数
+
+    # 1. 计算 Overall 指标
+    print(f"\n--- Computing Overall Metrics ({len(gts_tokenized)} samples) ---")
+    overall_scores = calculate_metrics(gts_tokenized, res_tokenized)
+    all_scores["overall"] = overall_scores
+
+    # 2. 计算每个 Domain 的指标
+    for domain in sorted(list(all_domains)):
+        gts_domain = domain_gts_tokenized.get(domain, {})
+        res_domain = domain_res_tokenized.get(domain, {})
+        
+        if not gts_domain or not res_domain:
+            print(f"\nSkipping domain {domain}: No common data found after grouping.")
+            continue
+        
+        print(f"\n--- Computing Metrics for Domain: {domain} ({len(gts_domain)} samples) ---")
+        
+        # 确保 gts 和 res 的 qid 匹配
+        domain_common_ids = set(gts_domain.keys()) & set(res_domain.keys())
+        gts_domain_final = {qid: gts_domain[qid] for qid in domain_common_ids}
+        res_domain_final = {qid: res_domain[qid] for qid in domain_common_ids}
+        
+        if not gts_domain_final:
+             print(f"Skipping domain {domain}: No overlapping QIDs found in domain split.")
+             continue
+             
+        domain_scores = calculate_metrics(gts_domain_final, res_domain_final)
+        all_scores[domain] = domain_scores
+
+    # --- Save scores ---
+    if args.output_json:
+        print(f"\nSaving all scores (overall and per-domain) to {args.output_json}")
+        with open(args.output_json, 'w') as f:
+            json.dump(all_scores, f, indent=4) # 保存包含所有分数的嵌套字典
 
 if __name__ == "__main__":
-    main()
-
+    parser = argparse.ArgumentParser(description="Evaluate VQA predictions using standard NLP metrics.")
+    parser.add_argument('--pred-path', type=str, required=True,
+                        help="Path to the merged prediction JSON Lines file (e.g., merge.jsonl).")
+    parser.add_argument('--gt-file', type=str, required=True,
+                        help="Path to the original evaluation JSON Lines file containing ground truth answers.")
+    parser.add_argument('--output-json', type=str, default=None,
+                        help="Optional path to save the calculated scores as a JSON file.")
+    
+    args = parser.parse_args()
+    main(args)
