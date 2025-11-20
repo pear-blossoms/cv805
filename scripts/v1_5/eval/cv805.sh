@@ -4,24 +4,45 @@ export MIOPEN_CUSTOM_CACHE_DIR="/vast/users/xiaodan/haokunlin/.cache/miopen_cach
 export MIOPEN_USER_DB_PATH="/vast/users/xiaodan/haokunlin/.cache/miopen_db"
 # --- Configuration Section (Please EDIT these paths!) ---
 
-# 1. Path to your FINISHED continual learning model directory
-#    (e.g., the one created after training CT, CXR, Histopathology, AND MRI)
-MODEL_PATH="/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-v1.5-7b" # <--- MUST EDIT: Update with your final model path
+# 1. Path to ALL your FINISHED continual learning model directories
+# MODEL_PATHS=(
+#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava_vqa-rad1_abd"
+#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava_vqa-rad1_abd_chest"
+#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava_vqa-rad1_abd_chest_head"
+# )
+
+MODEL_PATHS=(
+    "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-slake1_sct"
+    "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-slake1_sct_smri"
+    "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-slake1_sct_smri_sxray"
+)
+
+# MODEL_PATHS=(
+#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med5_MRI"
+#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med5_MRI_CXR"
+#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med5_MRI_CXR_CT"
+# )
 
 # 2. Path to the evaluation question file (the .jsonl you provided)
-QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/llava_med_eval_qa50_qa.jsonl" # <--- MUST EDIT: Update with the actual path
+# QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/llava_med_eval_qa50_qa.jsonl"
+# QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/vqa-rad/data/test_vqa_rad.jsonl"
+QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/SLAKE/test_slake.jsonl"
 
 # 3. Path to the directory containing the evaluation images
-IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/eval_images" # <--- MUST EDIT: Update with the actual path if different
+# IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/eval_images"
+# IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/vqa-rad/data/test"
+IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/SLAKE/imgs"
 
 # 4. Name for this specific evaluation run (used for subdirectories)
-EVAL_SPLIT_NAME="llava_med_eval_qa50"
+# EVAL_SPLIT_NAME="llava_med_eval_qa50"
+# EVAL_SPLIT_NAME="vqa-rad_eval"
+EVAL_SPLIT_NAME="slake_eval"
 
 # 5. Base name for the experiment (used for subdirectories)
-EXP_NAME="my_continual_eval" # Or keep 'newdomain_order3' if preferred
+EXP_NAME="my_continual_eval"
 
 # 6. Conversation mode (should match the mode used during training, e.g., "vicuna_v1")
-CONV_MODE="vicuna_v1" # <--- Verify this matches your training setup
+CONV_MODE="vicuna_v1"
 
 # --- End Configuration Section ---
 
@@ -35,71 +56,81 @@ CHUNKS=${#GPULIST[@]}
 echo "Using GPUs: ${GPULIST[@]}"
 echo "Number of parallel chunks: $CHUNKS"
 
-# Extract the base model name for directory naming
-MODEL_BASENAME=$(basename "$MODEL_PATH")
+for MODEL_PATH in "${MODEL_PATHS[@]}"; do
 
-# Define the main evaluation directory
-EVAL_DIR="./eval/${EVAL_SPLIT_NAME}/answers/${EXP_NAME}_${MODEL_BASENAME}"
-echo "Evaluation results will be stored in: $EVAL_DIR"
+    echo "=========================================================================="
+    echo "========= PROCESSING MODEL: $MODEL_PATH =========="
+    echo "=========================================================================="
 
-# Create necessary directories
-mkdir -p "$EVAL_DIR"
+    # Extract the base model name for directory naming
+    MODEL_BASENAME=$(basename "$MODEL_PATH")
 
-# Step 1: Run parallel inference using model_vqa_loader
-echo "Starting parallel inference..."
-for IDX in $(seq 0 $((CHUNKS-1))); do
-    GPU_IDX=${GPULIST[$IDX]}
-    ANS_FILE="$EVAL_DIR/${CHUNKS}_${IDX}.jsonl"
+    # Define the main evaluation directory
+    EVAL_DIR="./eval/${EVAL_SPLIT_NAME}/answers/${EXP_NAME}_${MODEL_BASENAME}"
+    echo "Evaluation results will be stored in: $EVAL_DIR"
 
-    echo "Launching inference chunk $IDX on GPU $GPU_IDX, outputting to $ANS_FILE"
+    # Create necessary directories
+    mkdir -p "$EVAL_DIR"
 
-    HIP_VISIBLE_DEVICES=$GPU_IDX python -m llava.eval.model_vqa_loader \
-        --model-path "$MODEL_PATH" \
-        --question-file "$QUESTION_FILE" \
-        --image-folder "$IMAGE_FOLDER" \
-        --answers-file "$ANS_FILE" \
-        --num-chunks "$CHUNKS" \
-        --chunk-idx "$IDX" \
-        --temperature 0 \
-        --conv-mode "$CONV_MODE" \
-        --batch-size 1 &
+    # Step 1: Run parallel inference using model_vqa_loader
+    echo "Starting parallel inference for $MODEL_BASENAME..."
+    for IDX in $(seq 0 $((CHUNKS-1))); do
+        GPU_IDX=${GPULIST[$IDX]}
+        ANS_FILE="$EVAL_DIR/${CHUNKS}_${IDX}.jsonl"
+
+        echo "Launching inference chunk $IDX on GPU $GPU_IDX, outputting to $ANS_FILE"
+
+        HIP_VISIBLE_DEVICES=$GPU_IDX python -m llava.eval.model_vqa_loader \
+            --model-path "$MODEL_PATH" \
+            --question-file "$QUESTION_FILE" \
+            --image-folder "$IMAGE_FOLDER" \
+            --answers-file "$ANS_FILE" \
+            --num-chunks "$CHUNKS" \
+            --chunk-idx "$IDX" \
+            --temperature 0 \
+            --conv-mode "$CONV_MODE"
+    done
+
+    # Wait for all background inference jobs to complete
+    wait
+    echo "Parallel inference finished for $MODEL_BASENAME."
+
+    # Step 2: Merge the results
+    MERGED_ANSWER_FILE="$EVAL_DIR/merged_predictions.jsonl"
+    echo "Merging prediction files into $MERGED_ANSWER_FILE..."
+
+    # Clear out the merged file if it exists.
+    > "$MERGED_ANSWER_FILE"
+
+    # Loop through the indices and concatenate each chunk's result file.
+    for IDX in $(seq 0 $((CHUNKS-1))); do
+        CHUNK_FILE="$EVAL_DIR/${CHUNKS}_${IDX}.jsonl"
+        if [[ -f "$CHUNK_FILE" ]]; then
+            cat "$CHUNK_FILE" >> "$MERGED_ANSWER_FILE"
+            echo "Appended $CHUNK_FILE"
+        else
+            echo "Warning: Chunk file $CHUNK_FILE not found."
+        fi
+    done
+    echo "Merging complete for $MODEL_BASENAME."
+
+    # Step 3: Run evaluation using the modified script with NLP metrics
+    SCORES_FILE="$EVAL_DIR/nlp_metrics_scores.json"
+    echo "Running evaluation using NLP metrics for $MODEL_BASENAME..."
+
+    python llava/eval/eval_video_qa.py \
+        --pred-path "$MERGED_ANSWER_FILE" \
+        --gt-file "$QUESTION_FILE" \
+        --output-json "$SCORES_FILE"
+
+    echo "-------------------------------------"
+    echo "Evaluation complete for $MODEL_BASENAME."
+    echo "NLP metrics scores saved to: $SCORES_FILE"
+    echo "You can view the scores by running: cat $SCORES_FILE"
+    echo "-------------------------------------"
 
 done
 
-# Wait for all background inference jobs to complete
-wait
-echo "Parallel inference finished."
-
-# Step 2: Merge the results
-MERGED_ANSWER_FILE="$EVAL_DIR/merged_predictions.jsonl"
-echo "Merging prediction files into $MERGED_ANSWER_FILE..."
-
-# Clear out the merged file if it exists.
-> "$MERGED_ANSWER_FILE"
-
-# Loop through the indices and concatenate each chunk's result file.
-for IDX in $(seq 0 $((CHUNKS-1))); do
-    CHUNK_FILE="$EVAL_DIR/${CHUNKS}_${IDX}.jsonl"
-    if [[ -f "$CHUNK_FILE" ]]; then
-        cat "$CHUNK_FILE" >> "$MERGED_ANSWER_FILE"
-        echo "Appended $CHUNK_FILE"
-    else
-        echo "Warning: Chunk file $CHUNK_FILE not found."
-    fi
-done
-echo "Merging complete."
-
-# Step 3: Run evaluation using the modified script with NLP metrics
-SCORES_FILE="$EVAL_DIR/nlp_metrics_scores.json"
-echo "Running evaluation using NLP metrics..."
-
-python llava/eval/eval_video_qa.py \
-    --pred-path "$MERGED_ANSWER_FILE" \
-    --gt-file "$QUESTION_FILE" \
-    --output-json "$SCORES_FILE"
-
-echo "-------------------------------------"
-echo "Evaluation complete."
-echo "NLP metrics scores saved to: $SCORES_FILE"
-echo "You can view the scores by running: cat $SCORES_FILE"
-echo "-------------------------------------"
+echo "=========================================================================="
+echo "========= ALL MODELS HAVE BEEN EVALUATED. =========="
+echo "=========================================================================="

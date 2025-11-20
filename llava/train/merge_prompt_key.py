@@ -57,4 +57,22 @@ prompt_key = torch.cat(
 
 print("prompt_key.shape: {}".format(prompt_key.shape))
 
-torch.save(prompt_key, '/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key.pth')
+torch.save(prompt_key, '/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key_o.pth')
+
+# CT_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/CT.pth')['keys'] # [1, 4, 32, 192]
+# CXR_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/CXR.pth')['keys']
+# Histopathology_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/Histopathology.pth')['keys']
+# print('keys loaded')
+
+# prompt_key = torch.cat(
+#     (
+#         CT_prompt_key[:, :1, :, :], 
+#         CXR_prompt_key[:, 1:2, :, :], 
+#         Histopathology_prompt_key[:, 2:3, :, :], 
+#     ), 
+#     dim=1
+# )
+
+# print("prompt_key.shape: {}".format(prompt_key.shape))
+
+# torch.save(prompt_key, '/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key.pth')

@@ -31,7 +31,7 @@ class LlavaConfig(LlamaConfig):
     def __init__(self, vocab_size=32000, hidden_size=4096, intermediate_size=11008, num_hidden_layers=32, num_attention_heads=32, num_key_value_heads=None, hidden_act="silu", max_position_embeddings=2048, initializer_range=0.02, rms_norm_eps=0.000001, use_cache=True, pad_token_id=0, bos_token_id=1, eos_token_id=2, pretraining_tp=1, tie_word_embeddings=False, rope_scaling=None, rope_theta=10000.0, **kwargs):
         super().__init__(vocab_size=vocab_size, hidden_size=hidden_size, intermediate_size=intermediate_size, num_hidden_layers=num_hidden_layers, num_attention_heads=num_attention_heads, num_key_value_heads=num_key_value_heads, hidden_act=hidden_act, max_position_embeddings=max_position_embeddings, initializer_range=initializer_range, rms_norm_eps=rms_norm_eps, use_cache=use_cache, pad_token_id=pad_token_id, bos_token_id=bos_token_id, eos_token_id=eos_token_id, pretraining_tp=pretraining_tp, tie_word_embeddings=tie_word_embeddings, rope_scaling=rope_scaling, rope_theta=rope_theta, **kwargs)
         self.model_name = '/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-v1.5-7b'
-        self.dataset_type = 'llava-med' # 'domain', 'capability', 'dataset'
+        self.dataset_type = 'slake' # 'domain', 'capability', 'dataset'
         self.task = "" 
         self.preprare_retreival_version = 'firstq' # lastq, preqa, allqa
         self.retriever_state_dict = ''# False: know task id for training; True: not know task id for inference
@@ -71,11 +71,27 @@ class LlavaConfig(LlamaConfig):
                 "Grounding":[40, 48],
                 "VQAv2":[48, 56],
                 "OCRVQA":[56, 64]},
+            # 'llava-med': {
+            #     'CT':[0, 8],
+            #     "CXR":[8, 16],
+            #     "Histopathology":[16, 24],
+            #     "MRI":[24, 32]},
             'llava-med': {
-                'CT':[0, 8],
-                "CXR":[8, 16],
-                "Histopathology":[16, 24],
-                "MRI":[24, 32]}
+                'CXR':[0, 8],
+                "CT":[8, 16],
+                "MRI":[16, 24],
+                # "Histopathology":[24, 32]
+            },
+            'vqa-rad': {
+                'abd': [0, 8],    
+                'chest': [8, 16],  
+                'head': [16, 24] 
+            },
+            'slake':{
+                'sct':[0, 8],
+                "smri":[8, 16],
+                "sxray":[16, 24],
+            }
 
         }
         self.task_pool_index_range = self.dataset_type_map[self.dataset_type]
@@ -106,9 +122,19 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
 
         self.retriever = Retriever(config)
+        # if config.retriever_state_dict:
+        #     self.retriever.keys = nn.parameter.Parameter(torch.load(config.retriever_state_dict), requires_grad=False)
+        #     print('retriever shape: ', self.retriever.keys.shape)
+        
         if config.retriever_state_dict:
-            self.retriever.keys = nn.parameter.Parameter(torch.load(config.retriever_state_dict), requires_grad=False)
-            print('retriever shape: ', self.retriever.keys.shape)
+            print(f"loading parameters from {config.retriever_state_dict}...")
+            merged_params = torch.load(config.retriever_state_dict)
+            
+            self.retriever.keys = nn.parameter.Parameter(merged_params['keys'], requires_grad=False)
+            print('Retriever keys: ', self.retriever.keys.shape)
+            
+            # self.retriever.weight_offset_components = nn.parameter.Parameter(merged_params['weight_offset_components'], requires_grad=False)
+            # print('Retriever weights: ', self.retriever.weight_offset_components.shape)
 
         # Initialize weights and apply final processing
         self.post_init()

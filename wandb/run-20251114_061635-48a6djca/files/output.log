@@ -1,0 +1,159 @@
+[34m[1mwandb[0m: Detected [openai] in use.
+[34m[1mwandb[0m: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+[34m[1mwandb[0m: For more information, check out the docs at: https://weave-docs.wandb.ai/
+  0%|                                                                                       | 0/128 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/train/train_mem.py", line 4, in <module>
+    train(attn_implementation="flash_attention_2")
+  File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/train/train.py", line 1006, in train
+    trainer.train()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 1539, in train
+    return inner_training_loop(
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 1869, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 2772, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 2795, in compute_loss
+    outputs = model(**inputs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 1890, in forward
+    loss = self.module(*inputs, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+    return inner()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+    result = forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/language_model/llava_llama.py", line 198, in forward
+    ) = self.prepare_inputs_labels_for_multimodal(
+  File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/llava_arch.py", line 212, in prepare_inputs_labels_for_multimodal
+    image_features = self.encode_images(images)
+  File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/llava_arch.py", line 152, in encode_images
+    image_features = self.get_model().get_vision_tower()(images)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+    return inner()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+    result = forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/multimodal_encoder/clip_encoder.py", line 54, in forward
+    image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+    return inner()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+    result = forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/models/clip/modeling_clip.py", line 917, in forward
+    return self.vision_model(
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+    return inner()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+    result = forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/models/clip/modeling_clip.py", line 841, in forward
+    hidden_states = self.embeddings(pixel_values)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+    return inner()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+    result = forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/models/clip/modeling_clip.py", line 182, in forward
+    patch_embeds = self.patch_embedding(pixel_values.to(dtype=target_dtype))  # shape = [*, width, grid, grid]
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+    return inner()
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+    result = forward_call(*args, **kwargs)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 554, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 549, in _conv_forward
+    return F.conv2d(
+RuntimeError: miopenStatusInternalError
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/train/train_mem.py", line 4, in <module>
+[rank0]:     train(attn_implementation="flash_attention_2")
+[rank0]:   File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/train/train.py", line 1006, in train
+[rank0]:     trainer.train()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 1539, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 1869, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 2772, in training_step
+[rank0]:     loss = self.compute_loss(model, inputs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/trainer.py", line 2795, in compute_loss
+[rank0]:     outputs = model(**inputs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/deepspeed/runtime/engine.py", line 1890, in forward
+[rank0]:     loss = self.module(*inputs, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/language_model/llava_llama.py", line 198, in forward
+[rank0]:     ) = self.prepare_inputs_labels_for_multimodal(
+[rank0]:   File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/llava_arch.py", line 212, in prepare_inputs_labels_for_multimodal
+[rank0]:     image_features = self.encode_images(images)
+[rank0]:   File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/llava_arch.py", line 152, in encode_images
+[rank0]:     image_features = self.get_model().get_vision_tower()(images)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/model/multimodal_encoder/clip_encoder.py", line 54, in forward
+[rank0]:     image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/models/clip/modeling_clip.py", line 917, in forward
+[rank0]:     return self.vision_model(
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/models/clip/modeling_clip.py", line 841, in forward
+[rank0]:     hidden_states = self.embeddings(pixel_values)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/transformers/models/clip/modeling_clip.py", line 182, in forward
+[rank0]:     patch_embeds = self.patch_embedding(pixel_values.to(dtype=target_dtype))  # shape = [*, width, grid, grid]
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1857, in _call_impl
+[rank0]:     return inner()
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1805, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 554, in forward
+[rank0]:     return self._conv_forward(input, self.weight, self.bias)
+[rank0]:   File "/vast/users/xiaodan/miniconda3/envs/llava/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 549, in _conv_forward
+[rank0]:     return F.conv2d(
+[rank0]: RuntimeError: miopenStatusInternalError

@@ -1,2 +1,6 @@
+eval
+evaluation_plots_by_task
 llava
 llava_original
+output
+wandb

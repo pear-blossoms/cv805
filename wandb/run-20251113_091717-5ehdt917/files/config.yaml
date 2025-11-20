@@ -1,0 +1,878 @@
+_name_or_path:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med_CT_CXR
+_wandb:
+    value:
+        cli_version: 0.23.0
+        code_path: code/llava/train/train_mem.py
+        e:
+            a702rzn1veq2p2ielhsijpluw6ryzk27:
+                args:
+                    - --local_rank=0
+                    - --deepspeed
+                    - ./scripts/zero3.json
+                    - --model_name_or_path
+                    - /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med_CT_CXR
+                    - --version
+                    - v1
+                    - --data_path
+                    - /vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/training/Histopathology_data_3404.json
+                    - --cl_data_clss
+                    - Histopathology
+                    - --image_folder
+                    - /vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/training_images/Histopathology_data
+                    - --vision_tower
+                    - /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/clip-vit-large-patch14-336
+                    - --mm_projector_type
+                    - mlp2x_gelu
+                    - --mm_vision_select_layer
+                    - "-2"
+                    - --mm_use_im_start_end
+                    - "False"
+                    - --mm_use_im_patch_token
+                    - "False"
+                    - --image_aspect_ratio
+                    - pad
+                    - --group_by_modality_length
+                    - "True"
+                    - --bf16
+                    - "True"
+                    - --output_dir
+                    - /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med_CT_CXR_Histopathology
+                    - --num_train_epochs
+                    - "1"
+                    - --per_device_train_batch_size
+                    - "4"
+                    - --per_device_eval_batch_size
+                    - "4"
+                    - --gradient_accumulation_steps
+                    - "1"
+                    - --evaluation_strategy
+                    - "no"
+                    - --save_strategy
+                    - steps
+                    - --save_steps
+                    - "50000"
+                    - --save_total_limit
+                    - "1"
+                    - --learning_rate
+                    - "2e-5"
+                    - --weight_decay
+                    - "0."
+                    - --warmup_ratio
+                    - "0.03"
+                    - --lr_scheduler_type
+                    - cosine
+                    - --logging_steps
+                    - "1"
+                    - --tf32
+                    - "False"
+                    - --model_max_length
+                    - "2048"
+                    - --gradient_checkpointing
+                    - "True"
+                    - --dataloader_num_workers
+                    - "4"
+                    - --lazy_preprocess
+                    - "True"
+                    - --disable_task_id
+                    - "False"
+                    - --dataset_type
+                    - llava-med
+                    - --report_to
+                    - wandb
+                    - --retriever_state_dict
+                    - /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key.pth
+                codePath: llava/train/train_mem.py
+                codePathLocal: llava/train/train_mem.py
+                cpu_count: 64
+                cpu_count_logical: 128
+                disk:
+                    /:
+                        total: "470343073792"
+                        used: "51298205696"
+                email: haokun.lin@mbzuai.ac.ae
+                executable: /vast/users/xiaodan/miniconda3/envs/llava/bin/python3.10
+                git:
+                    commit: addee5a017650f2875eb3277a2e02ff155007ed5
+                    remote: https://github.com/pear-blossoms/cv805.git
+                gpu: Instinct MI210
+                gpu_amd:
+                    - id: "6"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0x26214d965d8f4815"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "7"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0xca553ede42ea1262"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "0"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0xc3d9b80e5f89561c"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "5"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0xbb371ed131611f8a"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "4"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0x7cf2519c85177f34"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "1"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0x3b16988d55c20f76"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "2"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0xe8d87997e59c0d4f"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                    - id: "3"
+                      maxPower: "300.0"
+                      mclkRange: 400Mhz - 1600Mhz
+                      model: "0x740f"
+                      performanceLevel: auto
+                      sclkRange: 500Mhz - 1700Mhz
+                      series: Instinct MI210
+                      sku: D67301V
+                      uniqueId: "0x51fac9a523dc634"
+                      vbiosVersion: 113-D67301V-073
+                      vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                gpu_count: 8
+                host: auh7-1b-gpu-219
+                memory:
+                    total: "2434606727168"
+                os: Linux-5.15.0-140-generic-x86_64-with-glibc2.35
+                program: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/train/train_mem.py
+                python: CPython 3.10.19
+                root: /vast/users/xiaodan/haokunlin/Continual_LLaVA
+                slurm:
+                    cluster_name: ai-04r
+                    conf: /etc/slurm/slurm.conf
+                    cpu_bind: quiet,mask_cpu:0x0000FFFFFFFFFFFF0000FFFFFFFFFFFF
+                    cpu_bind_list: 0x0000FFFFFFFFFFFF0000FFFFFFFFFFFF
+                    cpu_bind_type: 'mask_cpu:'
+                    cpu_bind_verbose: quiet
+                    cpus_on_node: "96"
+                    cpus_per_gpu: "12"
+                    distribution: cyclic
+                    gpus_on_node: "8"
+                    gpus_per_node: "8"
+                    gtids: "0"
+                    job_account: faculty-acc
+                    job_cpus_per_node: "128"
+                    job_end_time: "1763272119"
+                    job_gid: "2000"
+                    job_group: camdpi
+                    job_id: "10328"
+                    job_name: hkexp
+                    job_nodelist: auh7-1b-gpu-219
+                    job_num_nodes: "1"
+                    job_partition: faculty
+                    job_qos: xdqos
+                    job_start_time: "1763012919"
+                    job_uid: "2013"
+                    job_user: xiaodan
+                    jobid: "10328"
+                    launch_node_ipaddr: 172.27.112.247
+                    localid: "0"
+                    mem_per_node: "524288"
+                    mpi_type: pmix
+                    nnodes: "1"
+                    nodeid: "0"
+                    nodelist: auh7-1b-gpu-219
+                    nprocs: "1"
+                    ntasks: "1"
+                    oom_kill_step: "0"
+                    pmix_mapping_serv: (vector,(0,1,1))
+                    pmixp_abort_agent_port: "46119"
+                    prio_process: "0"
+                    procid: "0"
+                    pty_port: "33731"
+                    pty_win_col: "148"
+                    pty_win_row: "30"
+                    srun_comm_host: 172.27.112.247
+                    srun_comm_port: "42189"
+                    step_gpus: 0,1,2,3,4,5,6,7
+                    step_id: "0"
+                    step_launcher_port: "42189"
+                    step_nodelist: auh7-1b-gpu-219
+                    step_num_nodes: "1"
+                    step_num_tasks: "1"
+                    step_tasks_per_node: "1"
+                    stepid: "0"
+                    submit_dir: /vast/users/xiaodan
+                    submit_host: auh-1b-cpu-login-001
+                    task_pid: "3770917"
+                    tasks_per_node: "1"
+                    topology_addr: auh7-1b-gpu-219
+                    topology_addr_pattern: node
+                    umask: "0022"
+                startedAt: "2025-11-13T09:17:17.739396Z"
+                writerId: a702rzn1veq2p2ielhsijpluw6ryzk27
+        m:
+            - "1": train/global_step
+              "6":
+                - 3
+              "7": []
+            - "2": '*'
+              "5": 1
+              "6":
+                - 1
+              "7": []
+        python_version: 3.10.19
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+                - 95
+                - 98
+                - 105
+            "2":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+                - 95
+                - 98
+                - 105
+            "3":
+                - 7
+                - 66
+            "4": 3.10.19
+            "5": 0.23.0
+            "6": 4.37.2
+            "9":
+                "1": transformers_trainer
+            "12": 0.23.0
+            "13": linux-x86_64
+adafactor:
+    value: false
+adam_beta1:
+    value: 0.9
+adam_beta2:
+    value: 0.999
+adam_epsilon:
+    value: 1e-08
+add_cross_attention:
+    value: false
+architectures:
+    value:
+        - LlavaLlamaForCausalLM
+attention_bias:
+    value: false
+attention_dropout:
+    value: 0
+auto_find_batch_size:
+    value: false
+bad_words_ids:
+    value: null
+begin_suppress_tokens:
+    value: null
+bf16:
+    value: true
+bf16_full_eval:
+    value: false
+bits:
+    value: 16
+bos_token_id:
+    value: 1
+cache_dir:
+    value: null
+chunk_size_feed_forward:
+    value: 0
+cross_attention_hidden_size:
+    value: null
+data_seed:
+    value: null
+dataloader_drop_last:
+    value: false
+dataloader_num_workers:
+    value: 4
+dataloader_persistent_workers:
+    value: false
+dataloader_pin_memory:
+    value: true
+dataset_type:
+    value: llava-med
+dataset_type_map:
+    value:
+        dataset:
+            GQA:
+                - 24
+                - 32
+            Grounding:
+                - 40
+                - 48
+            ImageNet:
+                - 16
+                - 24
+            OCRVQA:
+                - 56
+                - 64
+            ScienceQA:
+                - 0
+                - 8
+            TextVQA:
+                - 8
+                - 16
+            VQAv2:
+                - 48
+                - 56
+            VizWiz:
+                - 32
+                - 40
+        domain:
+            chartqa:
+                - 0
+                - 8
+            docvqa:
+                - 8
+                - 16
+            iconqa:
+                - 16
+                - 24
+            medicalqa:
+                - 24
+                - 32
+        llava-med:
+            CT:
+                - 0
+                - 8
+            CXR:
+                - 8
+                - 16
+            Histopathology:
+                - 16
+                - 24
+            MRI:
+                - 24
+                - 32
+        newdomain:
+            GeoChat_Instruct:
+                - 0
+                - 8
+            agri:
+                - 40
+                - 48
+            art:
+                - 24
+                - 32
+            astro:
+                - 32
+                - 40
+            atom:
+                - 16
+                - 24
+            chem:
+                - 48
+                - 56
+            climate:
+                - 56
+                - 64
+            llava_med:
+                - 8
+                - 16
+        vqa_rad:
+            abd:
+                - 0
+                - 8
+            chest:
+                - 8
+                - 16
+            head:
+                - 16
+                - 24
+ddp_backend:
+    value: null
+ddp_broadcast_buffers:
+    value: null
+ddp_bucket_cap_mb:
+    value: null
+ddp_find_unused_parameters:
+    value: null
+ddp_timeout:
+    value: 1800
+debug:
+    value: []
+decoder_start_token_id:
+    value: null
+deepspeed:
+    value: ./scripts/zero3.json
+disable_task_id:
+    value: false
+disable_tqdm:
+    value: false
+dispatch_batches:
+    value: null
+diversity_penalty:
+    value: 0
+do_eval:
+    value: false
+do_predict:
+    value: false
+do_sample:
+    value: false
+do_train:
+    value: false
+double_quant:
+    value: true
+early_stopping:
+    value: false
+encoder_no_repeat_ngram_size:
+    value: 0
+eos_token_id:
+    value: 2
+eval_accumulation_steps:
+    value: null
+eval_delay:
+    value: 0
+eval_steps:
+    value: null
+evaluation_strategy:
+    value: "no"
+exponential_decay_length_penalty:
+    value: null
+finetuning_task:
+    value: null
+forced_bos_token_id:
+    value: null
+forced_eos_token_id:
+    value: null
+fp16:
+    value: false
+fp16_backend:
+    value: auto
+fp16_full_eval:
+    value: false
+fp16_opt_level:
+    value: O1
+freeze_mm_mlp_adapter:
+    value: false
+freeze_mm_vision_resampler:
+    value: false
+fsdp:
+    value: []
+fsdp_config:
+    value:
+        min_num_params: 0
+        xla: false
+        xla_fsdp_grad_ckpt: false
+fsdp_min_num_params:
+    value: 0
+fsdp_transformer_layer_cls_to_wrap:
+    value: null
+full_determinism:
+    value: false
+gradient_accumulation_steps:
+    value: 1
+gradient_checkpointing:
+    value: true
+gradient_checkpointing_kwargs:
+    value: null
+greater_is_better:
+    value: null
+group_by_length:
+    value: false
+group_by_modality_length:
+    value: true
+groups:
+    value: 4
+half_precision_backend:
+    value: auto
+hidden_act:
+    value: silu
+hidden_size:
+    value: 4096
+hub_always_push:
+    value: false
+hub_model_id:
+    value: null
+hub_private_repo:
+    value: false
+hub_strategy:
+    value: every_save
+hub_token:
+    value: <HUB_TOKEN>
+id2label:
+    value:
+        "0": LABEL_0
+        "1": LABEL_1
+ignore_data_skip:
+    value: false
+image_aspect_ratio:
+    value: pad
+include_inputs_for_metrics:
+    value: false
+include_num_input_tokens_seen:
+    value: false
+include_tokens_per_second:
+    value: false
+initializer_range:
+    value: 0.02
+intermediate_size:
+    value: 11008
+is_decoder:
+    value: false
+is_encoder_decoder:
+    value: false
+jit_mode_eval:
+    value: false
+label_names:
+    value: null
+label_smoothing_factor:
+    value: 0
+label2id:
+    value:
+        LABEL_0: 0
+        LABEL_1: 1
+learning_rate:
+    value: 2e-05
+length_column_name:
+    value: length
+length_penalty:
+    value: 1
+load_best_model_at_end:
+    value: false
+local_rank:
+    value: 0
+log_level:
+    value: passive
+log_level_replica:
+    value: warning
+log_on_each_node:
+    value: true
+logging_dir:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med_CT_CXR_Histopathology/runs/Nov13_09-16-43_auh7-1b-gpu-219
+logging_first_step:
+    value: false
+logging_nan_inf_filter:
+    value: true
+logging_steps:
+    value: 1
+logging_strategy:
+    value: steps
+lora_alpha:
+    value: 16
+lora_bias:
+    value: none
+lora_dropout:
+    value: 0.05
+lora_enable:
+    value: false
+lora_r:
+    value: 64
+lora_weight_path:
+    value: ""
+low_rank:
+    value: 8
+lr_scheduler_type:
+    value: cosine
+max_grad_norm:
+    value: 1
+max_length:
+    value: 4096
+max_position_embeddings:
+    value: 4096
+max_steps:
+    value: -1
+metric_for_best_model:
+    value: null
+min_length:
+    value: 0
+mm_hidden_size:
+    value: 1024
+mm_patch_merge_type:
+    value: flat
+mm_projector_lr:
+    value: null
+mm_projector_type:
+    value: mlp2x_gelu
+mm_resampler_type:
+    value: null
+mm_use_im_patch_token:
+    value: false
+mm_use_im_start_end:
+    value: false
+mm_vision_select_feature:
+    value: patch
+mm_vision_select_layer:
+    value: -2
+mm_vision_tower:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/clip-vit-large-patch14-336
+model_max_length:
+    value: 2048
+model_name:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-v1.5-7b
+model_type:
+    value: llava_llama
+mp_parameters:
+    value: ""
+mpt_attn_impl:
+    value: triton
+neftune_noise_alpha:
+    value: null
+no_cuda:
+    value: false
+no_repeat_ngram_size:
+    value: 0
+num_attention_heads:
+    value: 32
+num_beam_groups:
+    value: 1
+num_beams:
+    value: 1
+num_hidden_layers:
+    value: 32
+num_key_value_heads:
+    value: 32
+num_return_sequences:
+    value: 1
+num_train_epochs:
+    value: 1
+optim:
+    value: adamw_torch
+optim_args:
+    value: null
+output_attentions:
+    value: false
+output_dir:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med_CT_CXR_Histopathology
+output_hidden_states:
+    value: false
+output_scores:
+    value: false
+overwrite_output_dir:
+    value: false
+pad_token_id:
+    value: 0
+past_index:
+    value: -1
+per_device_eval_batch_size:
+    value: 4
+per_device_train_batch_size:
+    value: 4
+per_gpu_eval_batch_size:
+    value: null
+per_gpu_train_batch_size:
+    value: null
+pool_size:
+    value: 32
+pool_train_keys:
+    value: true
+pool_train_weights:
+    value: true
+prediction_loss_only:
+    value: false
+prefix:
+    value: null
+preprare_retreival_version:
+    value: firstq
+pretraining_tp:
+    value: 1
+problem_type:
+    value: null
+push_to_hub:
+    value: false
+push_to_hub_model_id:
+    value: null
+push_to_hub_organization:
+    value: null
+push_to_hub_token:
+    value: <PUSH_TO_HUB_TOKEN>
+quant_type:
+    value: nf4
+random_dropout:
+    value: null
+ray_scope:
+    value: last
+remove_invalid_values:
+    value: false
+remove_unused_columns:
+    value: false
+repetition_penalty:
+    value: 1
+report_to:
+    value:
+        - wandb
+resume_from_checkpoint:
+    value: null
+retriever_state_dict:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key.pth
+return_dict:
+    value: true
+return_dict_in_generate:
+    value: false
+rms_norm_eps:
+    value: 1e-05
+rope_scaling:
+    value: null
+rope_theta:
+    value: 10000
+run_name:
+    value: /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med_CT_CXR_Histopathology
+save_on_each_node:
+    value: false
+save_only_model:
+    value: false
+save_safetensors:
+    value: true
+save_steps:
+    value: 50000
+save_strategy:
+    value: steps
+save_total_limit:
+    value: 1
+seed:
+    value: 42
+sep_token_id:
+    value: null
+similarity_type:
+    value: cosine
+skip_memory_metrics:
+    value: true
+split_batches:
+    value: false
+suppress_tokens:
+    value: null
+task:
+    value: Histopathology
+task_pool_index_range:
+    value:
+        CT:
+            - 0
+            - 8
+        CXR:
+            - 8
+            - 16
+        Histopathology:
+            - 16
+            - 24
+        MRI:
+            - 24
+            - 32
+task_specific_params:
+    value: null
+temperature:
+    value: 1
+tf_legacy_loss:
+    value: false
+tf32:
+    value: false
+tie_encoder_decoder:
+    value: false
+tie_word_embeddings:
+    value: false
+tokenizer_class:
+    value: null
+tokenizer_model_max_length:
+    value: 2048
+tokenizer_padding_side:
+    value: right
+top_k:
+    value: 50
+top_p:
+    value: 1
+torch_compile:
+    value: false
+torch_compile_backend:
+    value: null
+torch_compile_mode:
+    value: null
+torch_dtype:
+    value: float16
+torchdynamo:
+    value: null
+torchscript:
+    value: false
+tpu_metrics_debug:
+    value: false
+tpu_num_cores:
+    value: null
+transformers_version:
+    value: 4.37.2
+tune_mm_mlp_adapter:
+    value: false
+tune_mm_vision_resampler:
+    value: false
+typical_p:
+    value: 1
+unfreeze_mm_vision_tower:
+    value: false
+use_bfloat16:
+    value: false
+use_cache:
+    value: false
+use_cpu:
+    value: false
+use_ipex:
+    value: false
+use_legacy_prediction_loop:
+    value: false
+use_mm_proj:
+    value: true
+use_mps_device:
+    value: false
+vocab_size:
+    value: 32000
+warmup_ratio:
+    value: 0.03
+warmup_steps:
+    value: 0
+weight_decay:
+    value: 0
+weight_topk:
+    value: 4
