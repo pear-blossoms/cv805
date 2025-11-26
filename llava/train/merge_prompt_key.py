@@ -1,78 +1,49 @@
 import torch
+import os
 
-# ScienceQA_prompt_key = torch.load('./output/prompt-key/GeoChat_Instruct_prompt_key.pth')['keys'] # [1, 4, 32, 192]
-# TextVQA_prompt_key = torch.load('./output/prompt-key/llava_med_prompt_key.pth')['keys']
-# ImageNet_prompt_key = torch.load('./output/prompt-key/atom_prompt_key.pth')['keys']
-# GQA_prompt_key = torch.load('./output/prompt-key/art_prompt_key.pth')['keys']
-# VizWiz_prompt_key = torch.load('./output/prompt-key/astro_prompt_key.pth')['keys'] # [1, 4, 32, 192]
-# Grounding_prompt_key = torch.load('./output/prompt-key/agri_prompt_key.pth')['keys']
-# VQAv2_prompt_key = torch.load('./output/prompt-key/chem_prompt_key.pth')['keys']
-# OCRVQA_prompt_key = torch.load('./output/prompt-key/climate_prompt_key.pth')['keys']
-# print('keys loaded')
-# # 'weight_offset', 'keys'
+base_path = 'bash_folder'
+save_path = os.path.join(base_path, 'chest_abd_head.pth')
 
-# # prompt_key = torch.cat(
-# #     (chartqa_prompt_key[:, :, :8, :], 
-# #      docvqa_prompt_key[:, :, 8:16, :], 
-# #      iconqa_prompt_key[:, :, 16:24, :], 
-# #      medicalqa_prompt_key[:, :, 24:, :]), dim=1)
+path1 = os.path.join(base_path, 'chest.pth')
+path2 = os.path.join(base_path, 'abd.pth')
+path3 = os.path.join(base_path, 'head.pth')
+# path4 = os.path.join(base_path, 'CT.pth')
 
-# prompt_key = torch.cat(
-#     (ScienceQA_prompt_key[:, :1, :, :], 
-#      TextVQA_prompt_key[:, 1:2, :, :], 
-#      ImageNet_prompt_key[:, 2:3, :, :], 
-#      GQA_prompt_key[:, 3:4, :, :], 
-#      VizWiz_prompt_key[:, 4:5, :, :], 
-#      Grounding_prompt_key[:, 5:6, :, :], 
-#      VQAv2_prompt_key[:, 6:7, :, :], 
-#      OCRVQA_prompt_key[:, 7:8, :, :]), 
-#      dim=1)
+ckpt1 = torch.load(path1)
+ckpt2 = torch.load(path2)
+ckpt3 = torch.load(path3)
+# ckpt4 = torch.load(path4)
+print('all loaded')
 
-# print("prompt_key.shape: {}".format(prompt_key.shape))
-
-# torch.save(prompt_key, 'output/prompt-key/newdomain_prompt_key.pth')
-
-# # [1, 1, 1, 1, 1, 1, 1, 1, 0, ....]
-
-# # [:, :, :8, :]
-# # [:, :, 8:16, :]
-# # [:, :, 16:24, :]
-# # [:, :, 24:, :]
-
-CT_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/CT.pth')['keys'] # [1, 4, 32, 192]
-CXR_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/CXR.pth')['keys']
-Histopathology_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/Histopathology.pth')['keys']
-MRI_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/MRI.pth')['keys']
-print('keys loaded')
-
-prompt_key = torch.cat(
+merged_keys = torch.cat(
     (
-        CT_prompt_key[:, :1, :, :], 
-        CXR_prompt_key[:, 1:2, :, :], 
-        Histopathology_prompt_key[:, 2:3, :, :], 
-        MRI_prompt_key[:, 3:4, :, :], 
+        ckpt1['keys'][:, :, 0:8, :],   
+        ckpt2['keys'][:, :, 8:16, :],   
+        ckpt3['keys'][:, :, 16:24, :],
+        # ckpt4['keys'][:, :, 24:32, :]   
     ), 
-    dim=1
+    dim=2
 )
+print(f"shape of keys after merging: {merged_keys.shape}, saved to {save_path}") 
 
-print("prompt_key.shape: {}".format(prompt_key.shape))
-
-torch.save(prompt_key, '/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key_o.pth')
-
-# CT_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/CT.pth')['keys'] # [1, 4, 32, 192]
-# CXR_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/CXR.pth')['keys']
-# Histopathology_prompt_key = torch.load('/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/Histopathology.pth')['keys']
-# print('keys loaded')
-
-# prompt_key = torch.cat(
+# merged_weights = torch.cat(
 #     (
-#         CT_prompt_key[:, :1, :, :], 
-#         CXR_prompt_key[:, 1:2, :, :], 
-#         Histopathology_prompt_key[:, 2:3, :, :], 
+#         ct_ckpt['weight_offset_components'][0:8, :, :],   
+#         cxr_ckpt['weight_offset_components'][8:16, :, :],   
+#         hist_ckpt['weight_offset_components'][16:24, :, :], 
+#         mri_ckpt['weight_offset_components'][24:32, :, :] 
 #     ), 
-#     dim=1
+#     dim=0
 # )
+# print(f"shape of weights after merging: {merged_weights.shape}") 
 
-# print("prompt_key.shape: {}".format(prompt_key.shape))
+# save_dir = os.path.dirname(save_path)
+# if save_dir:
+#     os.makedirs(save_dir, exist_ok=True)
 
-# torch.save(prompt_key, '/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/merged_prompt_key.pth')
+torch.save({
+    'keys': merged_keys,
+    # 'weight_offset_components': merged_weights
+}, save_path)
+
+# print(f"saved: {save_path}")

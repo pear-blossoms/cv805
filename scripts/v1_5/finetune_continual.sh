@@ -2,9 +2,9 @@
 # cd /fsx/meng.cao/code/LLaVA
 # HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 
 set -e
-export MIOPEN_CUSTOM_CACHE_DIR="/vast/users/xiaodan/haokunlin/.cache/miopen_cache"
-export MIOPEN_USER_DB_PATH="/vast/users/xiaodan/haokunlin/.cache/miopen_db"
-exp_name="slake"
+export MIOPEN_CUSTOM_CACHE_DIR=".cache/miopen_cache"
+export MIOPEN_USER_DB_PATH=".cache/miopen_db"
+exp_name="vqa-rad"
 # task_ids=("GeoChat_Instruct" "llava_med" "atom" "art" "astro" "agri" "chem" "climate")
 # task_ids=("art" "climate" "llava_med" "GeoChat_Instruct" "agri" "chem" "astro" "atom")
 # task_ids=("CT" "CXR" "Histopathology" "MRI")
@@ -22,45 +22,49 @@ exp_name="slake"
 #     ["Histopathology"]=2e-5
 #     ["MRI"]=2e-5
 # )
-# task_ids=("abd" "chest" "head")
-# declare -A file_map=(
-#     ["abd"]="train_abd"
-#     ["chest"]="train_chest"
-#     ["head"]="train_head"
-# )
 
-# declare -A lr_map=(
-#     ["abd"]=2e-5
-#     ["chest"]=2e-5
-#     ["head"]=2e-5
-# )
-task_ids=("sct" "smri" "sxray")
+task_ids=("chest" "abd" "head")
 declare -A file_map=(
-    ["sct"]="train_modality_CT"
-    ["smri"]="train_modality_MRI"
-    ["sxray"]="train_modality_X-Ray"
+    ["abd"]="train_abd"
+    ["chest"]="train_chest"
+    ["head"]="train_head"
 )
 
 declare -A lr_map=(
-    ["sct"]=2e-5
-    ["smri"]=2e-5
-    ["sxray"]=2e-5
+    ["abd"]=2e-5
+    ["chest"]=2e-5
+    ["head"]=2e-5
 )
 
-init_model_name_or_path="/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-v1.5-7b"
-output_name="llava-slake1"
+# task_ids=("sct" "smri" "sxray")
+# declare -A file_map=(
+#     ["sct"]="train_modality_CT"
+#     ["smri"]="train_modality_MRI"
+#     ["sxray"]="train_modality_X-Ray"
+# )
+
+# declare -A lr_map=(
+#     ["sct"]=2e-5
+#     ["smri"]=2e-5
+#     ["sxray"]=2e-5
+# )
+
+init_model_name_or_path="Continual_LLaVA/llava/output/llava-v1.5-7b"
+output_name="llava_vqa-rad2"
 export HIP_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 for task_id in "${task_ids[@]}"; do
     current_file_name=${file_map[$task_id]}
     current_lr=${lr_map[$task_id]}
 
     output_name="${output_name}_${task_id}"
-    # image_folder="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/training_images/${task_id}_data"
-    # json_path="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/training/${current_file_name}.json"
-    # image_folder="/vast/users/xiaodan/haokunlin/data/vqa-rad/data/train"
-    # json_path="/vast/users/xiaodan/haokunlin/data/vqa-rad/data/${current_file_name}.json"
-    image_folder="/vast/users/xiaodan/haokunlin/data/SLAKE/imgs"
-    json_path="/vast/users/xiaodan/haokunlin/data/SLAKE/${current_file_name}.json"
+    # image_folder="data/llava_med_for_cv805/upload_hf/training_images/${task_id}_data"
+    # json_path="data/llava_med_for_cv805/upload_hf/training/${current_file_name}.json"
+
+    image_folder="data/vqa-rad/data/train"
+    json_path="data/vqa-rad/data/${current_file_name}.json"
+    
+    # image_folder="data/SLAKE/imgs"
+    # json_path="data/SLAKE/${current_file_name}.json"
     deepspeed llava/train/train_mem.py \
         --deepspeed ./scripts/zero3.json \
         --model_name_or_path $init_model_name_or_path \
@@ -68,7 +72,7 @@ for task_id in "${task_ids[@]}"; do
         --data_path $json_path \
         --cl_data_clss $task_id \
         --image_folder $image_folder \
-        --vision_tower /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/clip-vit-large-patch14-336 \
+        --vision_tower Continual_LLaVA/llava/output/clip-vit-large-patch14-336 \
         --mm_projector_type mlp2x_gelu \
         --mm_vision_select_layer -2 \
         --mm_use_im_start_end False \
@@ -76,7 +80,7 @@ for task_id in "${task_ids[@]}"; do
         --image_aspect_ratio pad \
         --group_by_modality_length True \
         --bf16 True \
-        --output_dir /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/$output_name \
+        --output_dir Continual_LLaVA/llava/output/$output_name \
         --num_train_epochs 1 \
         --per_device_train_batch_size 4 \
         --per_device_eval_batch_size 4 \
@@ -98,7 +102,7 @@ for task_id in "${task_ids[@]}"; do
         --disable_task_id False \
         --dataset_type $exp_name \
         --report_to wandb \
-        --retriever_state_dict /vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/prompt-key/slake-merged-key.pth \
+        --retriever_state_dict Continual_LLaVA/llava/output/prompt-key/chest_abd_head.pth \
 
 
     # # For quick check
@@ -109,5 +113,5 @@ for task_id in "${task_ids[@]}"; do
     # echo "output:"./output/"$exp_name"/llava-squential-v1.5-7b-vicuna"$output_name"
     # echo "==============="
 
-    init_model_name_or_path="/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/${output_name}"
+    init_model_name_or_path="Continual_LLaVA/llava/output/${output_name}"
 done

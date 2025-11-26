@@ -1,83 +1,93 @@
-# File: viz_result.py
-# (English-only version for plotting task-specific performance)
-
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
-# import matplotlib.font_manager as fm # Removed font setting
 import os
 
-# --- Configuration: Please verify these settings ---
-
 # Base directory where evaluation results are stored
-eval_base_dir = "./eval/llava_med_eval_qa50/answers/my_continual_eval_"
 
-# Model directory name suffixes (in training order) - 5 models
-model_dir_suffixes = [
-    "llava-v1.5-7b",              
-    "llava-med3_CXR",                   
-    "llava-med3_CXR_CT",                  
-    "llava-med3_CXR_CT_MRI",  
-    # "llava-med2_CXR_CT_MRI_Histopathology" 
-]
+
+### llava-med
+# eval_base_dir = "./eval/llava_med_eval_qa50/answers/my_continual_eval_"
 # model_dir_suffixes = [
-#     "llava-v1.5-7b",            
-#     "llava_vqa-rad1_abd",                   
-#     "llava_vqa-rad1_abd_chest",                 
-#     "llava_vqa-rad1_abd_chest_head",  
+#     "llava-v1.5-7b",              
+#     "llava-med3_CXR",                   
+#     "llava-med3_CXR_CT",                  
+#     "llava-med3_CXR_CT_MRI",  
+#     # "llava-med2_CXR_CT_MRI_Histopathology" 
 # ]
+# model_stage_labels = [
+#     "Baseline",
+#     "Learned CXR",
+#     "Learned CT",
+#     "Learned MRI",
+#     # "Learned Histo",
+# ]
+# plot_save_dir = "./v/evaluation_plots_llava-med3"
+# categories_to_plot = ["overall", "chest_xray", "ct_scan", "mri"]
+# category_labels = {
+#     "overall": "Overall",
+#     "chest_xray": "cxr Task",
+#     "ct_scan": "ct Task",
+#     "mri": "mri Task"
+# }
+
+### vqa-rad
+eval_base_dir = "./eval/vqa-rad_eval/answers/my_continual_eval_"
+model_dir_suffixes = [
+    "llava-v1.5-7b",            
+    "llava_vqa-rad2_chest",                   
+    "llava_vqa-rad2_chest_abd",                 
+    "llava_vqa-rad2_chest_abd_head",  
+]
+plot_save_dir = "./v/evaluation_plots_vqa-rad2"
+model_stage_labels = [
+    "Baseline",
+    "Learned chest",
+    "Learned abd",
+    "Learned head",
+]
+categories_to_plot = ["overall", "chest", "abd", "head"]
+category_labels = {
+    "overall": "Overall",
+    "chest": "Chest Task",
+    "abd": "Abd Task",
+    "head": "Head Task"
+}
+
+### slake
 # model_dir_suffixes = [
 #     "llava-v1.5-7b",            
 #     "llava-slake1_sct",                   
 #     "llava-slake1_sct_smri",                 
 #     "llava-slake1_sct_smri_sxray",  
 # ]
-
-# Name of the JSON file containing scores within each model directory
-score_file_name = "nlp_metrics_scores.json"
-
-# Labels for the plot's X-axis (corresponding to model_dir_suffixes) - 5 labels
-model_stage_labels = [
-    "Baseline",
-    "Learned CXR",
-    "Learned CT",
-    "Learned MRI",
-    # "Learned Histo",
-]
-# model_stage_labels = [
-#     "Baseline",
-#     "Learned abd",
-#     "Learned chest",
-#     "Learned head",
-# ]
+# plot_save_dir = "./v/evaluation_plots_slake1"
 # model_stage_labels = [
 #     "Baseline",
 #     "Learned ct",
 #     "Learned mri",
 #     "Learned xray",
 # ]
-# Ensure the two lists have the same length
+# categories_to_plot = ["overall", "chest_xray", "ct_scan", "mri"]
+# category_labels = {
+#     "overall": "Overall",
+#     "chest_xray": "cxr Task",
+#     "ct_scan": "ct Task",
+#     "mri": "mri Task"
+# }
+
+score_file_name = "nlp_metrics_scores.json"
+
 assert len(model_dir_suffixes) == len(model_stage_labels), \
     f"List length mismatch! model_dir_suffixes ({len(model_dir_suffixes)}) vs model_stage_labels ({len(model_stage_labels)})"
 
-# Task categories to track performance for (must match keys in JSON files)
-# Also include 'overall' to track general performance
-categories_to_plot = ["overall", "chest_xray", "ct_scan", "mri"]  # "histology", 
-# Labels for categories (used in the legend)
-category_labels = {
-    "overall": "Overall",
-    "chest_xray": "cxr Task",
-    "ct_scan": "ct Task",
-    "mri": "mri Task"
-}
+
 # Ensure we only plot categories present in the configuration
 categories_to_plot = [cat for cat in categories_to_plot if cat in category_labels]
 
 # Metrics to plot (ensure these keys match those within each category's dictionary in the JSON)
 metrics_to_plot = ["Bleu_4", "METEOR", "ROUGE_L", "CIDEr"]
 
-# Directory to save the plots
-plot_save_dir = "./evaluation_plots_slake1"
 os.makedirs(plot_save_dir, exist_ok=True)
 
 # --- Removed Chinese Font Setting Block ---

@@ -1,42 +1,39 @@
 #!/bin/bash
 set -e # Exit immediately if a command exits with a non-zero status.
-export MIOPEN_CUSTOM_CACHE_DIR="/vast/users/xiaodan/haokunlin/.cache/miopen_cache"
-export MIOPEN_USER_DB_PATH="/vast/users/xiaodan/haokunlin/.cache/miopen_db"
+export MIOPEN_CUSTOM_CACHE_DIR=".cache/miopen_cache"
+export MIOPEN_USER_DB_PATH=".cache/miopen_db"
 # --- Configuration Section (Please EDIT these paths!) ---
 
-# 1. Path to ALL your FINISHED continual learning model directories
-# MODEL_PATHS=(
-#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava_vqa-rad1_abd"
-#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava_vqa-rad1_abd_chest"
-#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava_vqa-rad1_abd_chest_head"
-# )
 
 MODEL_PATHS=(
-    "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-slake1_sct"
-    "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-slake1_sct_smri"
-    "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-slake1_sct_smri_sxray"
+    "Continual_LLaVA/llava/output/llava_vqa-rad2_chest"
+    "Continual_LLaVA/llava/output/llava_vqa-rad2_chest_abd"
+    "Continual_LLaVA/llava/output/llava_vqa-rad2_chest_abd_head"
 )
+QUESTION_FILE="data/vqa-rad/data/test_vqa_rad.jsonl"
+IMAGE_FOLDER="data/vqa-rad/data/test"
+EVAL_SPLIT_NAME="vqa-rad_eval"
 
 # MODEL_PATHS=(
-#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med5_MRI"
-#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med5_MRI_CXR"
-#     "/vast/users/xiaodan/haokunlin/Continual_LLaVA/llava/output/llava-med5_MRI_CXR_CT"
+#     "Continual_LLaVA/llava/output/llava-slake1_sct"
+#     "Continual_LLaVA/llava/output/llava-slake1_sct_smri"
+#     "Continual_LLaVA/llava/output/llava-slake1_sct_smri_sxray"
 # )
+# QUESTION_FILE="data/SLAKE/test_slake.jsonl"
+# IMAGE_FOLDER="data/SLAKE/imgs"
+# EVAL_SPLIT_NAME="slake_eval"
 
-# 2. Path to the evaluation question file (the .jsonl you provided)
-# QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/llava_med_eval_qa50_qa.jsonl"
-# QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/vqa-rad/data/test_vqa_rad.jsonl"
-QUESTION_FILE="/vast/users/xiaodan/haokunlin/data/SLAKE/test_slake.jsonl"
+# MODEL_PATHS=(
+#     "Continual_LLaVA/llava/output/llava-med5_MRI"
+#     "Continual_LLaVA/llava/output/llava-med5_MRI_CXR"
+#     "Continual_LLaVA/llava/output/llava-med5_MRI_CXR_CT"
+# )
+# QUESTION_FILE="data/llava_med_for_cv805/upload_hf/llava_med_eval_qa50_qa.jsonl"
+# IMAGE_FOLDER="data/llava_med_for_cv805/upload_hf/eval_images"
+# EVAL_SPLIT_NAME="llava_med_eval"
 
-# 3. Path to the directory containing the evaluation images
-# IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/llava_med_for_cv805/upload_hf/eval_images"
-# IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/vqa-rad/data/test"
-IMAGE_FOLDER="/vast/users/xiaodan/haokunlin/data/SLAKE/imgs"
 
-# 4. Name for this specific evaluation run (used for subdirectories)
-# EVAL_SPLIT_NAME="llava_med_eval_qa50"
-# EVAL_SPLIT_NAME="vqa-rad_eval"
-EVAL_SPLIT_NAME="slake_eval"
+
 
 # 5. Base name for the experiment (used for subdirectories)
 EXP_NAME="my_continual_eval"
