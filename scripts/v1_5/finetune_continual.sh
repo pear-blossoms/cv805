@@ -49,7 +49,7 @@ declare -A lr_map=(
 #     ["sxray"]=2e-5
 # )
 
-init_model_name_or_path="Continual_LLaVA/llava/output/llava-v1.5-7b"
+init_model_name_or_path="/llava/output/llava-v1.5-7b"
 output_name="llava_vqa-rad2"
 export HIP_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 for task_id in "${task_ids[@]}"; do
@@ -72,7 +72,7 @@ for task_id in "${task_ids[@]}"; do
         --data_path $json_path \
         --cl_data_clss $task_id \
         --image_folder $image_folder \
-        --vision_tower Continual_LLaVA/llava/output/clip-vit-large-patch14-336 \
+        --vision_tower /llava/output/clip-vit-large-patch14-336 \
         --mm_projector_type mlp2x_gelu \
         --mm_vision_select_layer -2 \
         --mm_use_im_start_end False \
@@ -80,7 +80,7 @@ for task_id in "${task_ids[@]}"; do
         --image_aspect_ratio pad \
         --group_by_modality_length True \
         --bf16 True \
-        --output_dir Continual_LLaVA/llava/output/$output_name \
+        --output_dir /llava/output/$output_name \
         --num_train_epochs 1 \
         --per_device_train_batch_size 4 \
         --per_device_eval_batch_size 4 \
@@ -102,7 +102,7 @@ for task_id in "${task_ids[@]}"; do
         --disable_task_id False \
         --dataset_type $exp_name \
         --report_to wandb \
-        --retriever_state_dict Continual_LLaVA/llava/output/prompt-key/chest_abd_head.pth \
+        --retriever_state_dict /llava/output/prompt-key/chest_abd_head.pth \
 
 
     # # For quick check
@@ -113,5 +113,5 @@ for task_id in "${task_ids[@]}"; do
     # echo "output:"./output/"$exp_name"/llava-squential-v1.5-7b-vicuna"$output_name"
     # echo "==============="
 
-    init_model_name_or_path="Continual_LLaVA/llava/output/${output_name}"
+    init_model_name_or_path="/llava/output/${output_name}"
 done

@@ -116,8 +116,8 @@ class Retriever(nn.Module):
 
         # self.tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/nli-roberta-base-v2')
         # self.bert = AutoModel.from_pretrained('sentence-transformers/nli-roberta-base-v2')
-        self.tokenizer = AutoTokenizer.from_pretrained('Continual_LLaVA/llava/output/nli-roberta-base-v2')
-        self.bert = AutoModel.from_pretrained('Continual_LLaVA/llava/output/nli-roberta-base-v2')
+        self.tokenizer = AutoTokenizer.from_pretrained('/llava/output/nli-roberta-base-v2')
+        self.bert = AutoModel.from_pretrained('/llava/output/nli-roberta-base-v2')
         
         for param in self.bert.parameters():
             param.requires_grad = False

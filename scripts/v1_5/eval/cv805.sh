@@ -6,27 +6,27 @@ export MIOPEN_USER_DB_PATH=".cache/miopen_db"
 
 
 MODEL_PATHS=(
-    "Continual_LLaVA/llava/output/llava_vqa-rad2_chest"
-    "Continual_LLaVA/llava/output/llava_vqa-rad2_chest_abd"
-    "Continual_LLaVA/llava/output/llava_vqa-rad2_chest_abd_head"
+    "/llava/output/llava_vqa-rad2_chest"
+    "/llava/output/llava_vqa-rad2_chest_abd"
+    "/llava/output/llava_vqa-rad2_chest_abd_head"
 )
 QUESTION_FILE="data/vqa-rad/data/test_vqa_rad.jsonl"
 IMAGE_FOLDER="data/vqa-rad/data/test"
 EVAL_SPLIT_NAME="vqa-rad_eval"
 
 # MODEL_PATHS=(
-#     "Continual_LLaVA/llava/output/llava-slake1_sct"
-#     "Continual_LLaVA/llava/output/llava-slake1_sct_smri"
-#     "Continual_LLaVA/llava/output/llava-slake1_sct_smri_sxray"
+#     "/llava/output/llava-slake1_sct"
+#     "/llava/output/llava-slake1_sct_smri"
+#     "/llava/output/llava-slake1_sct_smri_sxray"
 # )
 # QUESTION_FILE="data/SLAKE/test_slake.jsonl"
 # IMAGE_FOLDER="data/SLAKE/imgs"
 # EVAL_SPLIT_NAME="slake_eval"
 
 # MODEL_PATHS=(
-#     "Continual_LLaVA/llava/output/llava-med5_MRI"
-#     "Continual_LLaVA/llava/output/llava-med5_MRI_CXR"
-#     "Continual_LLaVA/llava/output/llava-med5_MRI_CXR_CT"
+#     "/llava/output/llava-med5_MRI"
+#     "/llava/output/llava-med5_MRI_CXR"
+#     "/llava/output/llava-med5_MRI_CXR_CT"
 # )
 # QUESTION_FILE="data/llava_med_for_cv805/upload_hf/llava_med_eval_qa50_qa.jsonl"
 # IMAGE_FOLDER="data/llava_med_for_cv805/upload_hf/eval_images"

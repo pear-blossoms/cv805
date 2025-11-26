@@ -1,7 +1,7 @@
 
 # Continual Learning for Medical VQA with Prompt-Key Retrieval
 
-This project implements a **Continual Learning (CL)** framework for Medical Visual Question Answering (Med-VQA). It adapts the **LLaVA-Med** architecture using a **Prompt-Key Retrieval** mechanism combined with **LoRA (Low-Rank Adaptation)**. This framework enables the model to learn new tasks (e.g., different medical domains like VQA-RAD) sequentially without suffering from Catastrophic Forgetting.
+This project implements a **Continual Learning** framework for Medical Visual Question Answering. It adapts the **LLaVA-Med** architecture using a **Prompt-Key Retrieval** mechanism combined with **LoRA**. This framework enables the model to learn new tasks (e.g., different medical domains like VQA-RAD) sequentially without suffering from Catastrophic Forgetting.
 
 ## 📂 Codebase Structure & Component Description
 
@@ -16,7 +16,6 @@ The codebase is organized as follows:
 * **`train_prompt_key.py`**: **[Stage 1 Training]** This script trains the retrieval keys independently. It maps input questions to specific task IDs (e.g., mapping an abdominal question to the "Abdomen" task slot).
 * **`merge_prompt_key.py`**: A utility script to merge independently trained key checkpoints (e.g., Chest, Abdomen, Head) into a single `merged_prompt_key.pth` file. This is **crucial** for assembling the final CL system.
 * **`finetune_continual.sh`**: **[Stage 2 Training]** The main shell script for continual instruction tuning. It iterates through tasks, loads the `merged_prompt_key`, and fine-tunes the LoRA weights using DeepSpeed Zero-3.
-* **`fusion.py`**: Data preprocessing script. It reads raw CSV/JSON metadata (e.g., from VQA-RAD) and converts it into the specific JSONL format required by LLaVA (`question_id`, `image`, `text`, `gpt4_answer`, `domain`).
 
 ### Evaluation
 * **`cv805.sh`**: The main evaluation entry point. It runs inference on test sets using `model_vqa_loader.py` and then calculates metrics using `eval_video_qa.py`.
@@ -40,71 +39,28 @@ This project relies on PyTorch, DeepSpeed, and the LLaVA ecosystem.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-url>
-    cd <your-repo-folder>
+    git clone https://github.com/pear-blossoms/cv805.git
+    cd cv805
     ```
 
 2.  **Create a Conda environment:**
     ```bash
     conda create -n llava python=3.10 -y
     conda activate llava
+    pip install -e .
+    pip install -e ".[train]"
+    pip install flash-attn --no-build-isolation
     ```
-
-3.  **Install Core Dependencies:**
-    ```bash
-    pip install --upgrade pip
-    # Adjust the following command for your specific CUDA or ROCm version
-    pip install torch torchvision torchaudio --index-url [https://download.pytorch.org/whl/cu118](https://download.pytorch.org/whl/cu118)
-    ```
-
-4.  **Install Project Dependencies:**
-    ```bash
-    pip install transformers==4.37.2
-    pip install accelerate
-    pip install deepspeed
-    pip install einops
-    pip install opencv-python
-    pip install shortuuid
-    pip install datasets
-    pip install pandas
-    pip install pycocoevalcap
-    ```
-
-5.  **Fixing Common Environment Issues (Important):**
-    * **Scikit-learn/Numpy ABI Conflict:** If you encounter `numpy.dtype size changed` errors during evaluation:
-        ```bash
-        pip install scikit-learn --no-cache-dir --force-reinstall
-        ```
-    * **Bitsandbytes (Quantization):**
-        * For **NVIDIA** GPUs:
-            ```bash
-            pip install bitsandbytes
-            ```
-        * For **AMD (ROCm)** GPUs: You must verify your ROCm version and install the compatible wheel or compile from source. The standard `pip install bitsandbytes` may not work.
-            ```bash
-            # Example for ROCm (verify version first)
-            pip install bitsandbytes-rocm
-            ```
 
 ---
 
 ## 📊 Data Preparation
 
 ### 1. Download Data
-This project uses the **VQA-RAD** dataset (or similar medical VQA datasets).
-* **Download Link:** [VQA-RAD Dataset on HuggingFace](https://huggingface.co/datasets/flaviagiammarino/vqa-rad) or [Original Source](https://osf.io/89k6j/).
-* Place images in: `data/vqa-rad/images/`
-* Place metadata in: `data/train/metadata.csv`
+This project uses the **VQA-RAD** dataset and **LLaVA-Med** dataset.
+* **Download Link Reference:** [VQA-RAD Dataset on HuggingFace](https://huggingface.co/datasets/flaviagiammarino/vqa-rad)
 
-### 2. Preprocess Data
-Use the `fusion.py` script to convert the raw metadata into the LLaVA-Med JSONL format required for training and evaluation.
-
-```bash
-python fusion.py
-```
-
-  * **Input:** `metadata.csv` and reference JSONs (`vqa_ABD.json`, etc.).
-  * **Output:** `data/train_vqa_rad_combined.jsonl` (contains fields like `question_id`, `text`, `image`, `domain`).
+* **Download Link Reference:** [VQA-RAD Dataset on HuggingFace](https://github.com/microsoft/LLaVA-Med?tab=readme-ov-file#data-download)
 
 -----
 
