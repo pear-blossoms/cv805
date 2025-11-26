@@ -60,7 +60,7 @@ This project relies on PyTorch, DeepSpeed, and the LLaVA ecosystem.
 This project uses the **VQA-RAD** dataset and **LLaVA-Med** dataset.
 * **Download Link Reference:** [VQA-RAD Dataset on HuggingFace](https://huggingface.co/datasets/flaviagiammarino/vqa-rad)
 
-* **Download Link Reference:** [VQA-RAD Dataset on HuggingFace](https://github.com/microsoft/LLaVA-Med?tab=readme-ov-file#data-download)
+* **Download Link Reference:** [LLaVA-Med Project Repository](https://github.com/microsoft/LLaVA-Med?tab=readme-ov-file#data-download)
 
 -----
 
